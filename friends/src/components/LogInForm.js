@@ -1,14 +1,17 @@
 import React, {useState} from 'react';
-import axios from 'axios';
+
+import {axiosWithAuth} from '../utils/axiosWithAuth';
 
 import {Link} from 'react-router-dom';
+
+import Loader from 'react-loader-spinner';
 
 const LogInForm = props => {
 
     const [info, setInfo]= useState({
         username: '',
         password: '',
-        isLoading: false
+        isLoading: false,
     });
 
     const handleChanges= evt => {
@@ -27,18 +30,19 @@ const LogInForm = props => {
             password: '',
         })
 
-        axios
-        .post('http://localhost:5000/api/login', info)
+        axiosWithAuth()
+        .post('/api/login', info)
         .then(res => {
             console.log('success', res);
 
             setInfo({
-                isLoading: true
+                isLoading: !false
             })
 
             window.localStorage.setItem('token', res.data.payload);
 
             props.history.push('/friends-list')
+
         })
         .catch(err => console.log('Error: ', err));
     }
@@ -48,6 +52,7 @@ const LogInForm = props => {
             <header>
                 <nav>
                     <Link to='/'>Home</Link>
+                    <Link to='/friends-list'>Friends</Link>
                 </nav>
             </header>
             <form onSubmit={handleSubmit}>
@@ -65,7 +70,21 @@ const LogInForm = props => {
                     value={info.password}
                     onChange={handleChanges}
                 />
-                <button type='submit'>log in</button>
+                <button onClick={() => {
+                        if(!info.isLoading){
+                            return (
+                                <Loader
+                                    type="Puff"
+                                    color="#00BFFF"
+                                    height={100}
+                                    width={100}
+                                    timeout={8000} //8 secs
+                                />
+                            )
+                        }
+                    }
+                } 
+                type='submit'>log in</button>
             </form>
         </div>
     )
