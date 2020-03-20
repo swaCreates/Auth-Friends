@@ -26,6 +26,10 @@ const LogInForm = props => {
         evt.preventDefault();
 
         setInfo({
+            isLoading: true
+        })
+
+        setInfo({
             username: '',
             password: '',
         })
@@ -35,11 +39,11 @@ const LogInForm = props => {
         .then(res => {
             console.log('success', res);
 
-            setInfo({
-                isLoading: !false
-            })
-
             window.localStorage.setItem('token', res.data.payload);
+
+            setInfo({
+                isLoading: false
+            })
 
             props.history.push('/friends-list')
 
